@@ -4,19 +4,13 @@ import {dijkstra, getNodesInShortestPathOrder} from '../algorithms/dijkstra';
 
 import './PathfindingVisualizer.css';
 
-const START_NODE_ROW = 10;
-const START_NODE_COL = 15;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 35;
+const START_NODE_ROW = Math.floor(Math.random() * 20);
+const START_NODE_COL = Math.floor(Math.random() * 50);
+const FINISH_NODE_ROW = Math.floor(Math.random() * 20);
+const FINISH_NODE_COL = Math.floor(Math.random() * 50);
 
 export default class PathfindingVisualizer extends Component {
-  constructor() {
-    super();
-    this.state = {
-      grid: [],
-      mouseIsPressed: false,
-    };
-  }
+  state = {grid: [], mouseIsPressed: false};
 
   componentDidMount() {
     const grid = getInitialGrid();
@@ -43,14 +37,13 @@ export default class PathfindingVisualizer extends Component {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
           this.animateShortestPath(nodesInShortestPathOrder);
-        }, 100 * i);
-        return;
-      }
-      setTimeout(() => {
-        const node = visitedNodesInOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
-          'node node-visited';
-      }, 100 * i);
+        }, 15 * i);
+      } else {
+          const node = visitedNodesInOrder[i];
+            setTimeout(() => {
+                document.getElementById(`node-${node.row}-${node.col}`).className = "node node-visited";
+            }, 15 * i);
+        }
     }
   }
 
@@ -58,9 +51,8 @@ export default class PathfindingVisualizer extends Component {
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
-          'node node-shortest-path';
-      }, 500 * i);
+        document.getElementById(`node-${node.row}-${node.col}`).className = "node node-shortest-path";
+      }, 30 * i);
     }
   }
 
@@ -79,7 +71,7 @@ export default class PathfindingVisualizer extends Component {
     return (
       <>
         <button onClick={() => this.visualizeDijkstra()}>
-          Visualize Dijkstra's Algorithm
+          Run Dijkstra's Algorithm
         </button>
         <div className="grid">
           {grid.map((row, rowIdx) => {
@@ -140,10 +132,7 @@ const createNode = (col, row) => {
 const getNewGridWithWallToggled = (grid, row, col) => {
   const newGrid = grid.slice();
   const node = newGrid[row][col];
-  const newNode = {
-    ...node,
-    isWall: !node.isWall,
-  };
-  newGrid[row][col] = newNode;
+  node.isWall = !node.isWall;
+  newGrid[row][col] = node;
   return newGrid;
 };

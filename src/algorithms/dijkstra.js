@@ -4,40 +4,6 @@
 // by backtracking from the finish node.
 export function dijkstra(grid, startNode, finishNode) {
     const visitedNodesInOrder = [];
-
-    // const initNode = startNode;
-    // visitedNodesInOrder.push(initNode);
-    // while(!!visitedNodesInOrder.length) {
-    //     const node = visitedNodesInOrder[visitedNodesInOrder.length - 1];
-    //     visitedNodesInOrder.pop();
-
-    //     if(node.isWall) continue;
-    //     if(node === finishNode) return visitedNodesInOrder;
-    //     if(node.isVisited) continue;
-    //     node.isVisited = true;
-
-    //     const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
-
-    //     for(const neighbor of unvisitedNeighbors) {
-    //         visitedNodesInOrder.push(neighbor);
-    //     }
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     startNode.distance = 0;
     const unvisitedNodes = getAllNodes(grid);
     while (!!unvisitedNodes.length) {
