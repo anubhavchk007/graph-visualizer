@@ -1,3 +1,93 @@
+*{
+    background-color: rgb(32, 31, 31);
+}
+
 .grid {
     margin: 100px 0 0;
+}
+.container1 {
+    /* display: flex; */
+    margin-top: 60px;
+    margin-bottom: -30px;
+    margin-left: -700px;
+    /* padding-bottom: 10px; */
+    /* d; */
+}
+
+.container2 {
+    position: absolute;
+    margin-top: -3px;
+    margin-left: 1200px;
+}
+
+#button {
+    outline: none;
+    height: 40px;
+    text-align: center;
+    width: 130px;
+    border-radius: 40px;
+    background: #181818;
+    border: 2px solid #1ecd97;
+    color: #1ecd97;
+    letter-spacing: 1px;
+    text-shadow: 0;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-right: 20px;
+    margin-top: 0;
+}
+
+#button:hover {
+    color: white;
+    background: #1ecd97;
+}
+#button:active {
+    letter-spacing: 2px;
+}
+
+#button2 {
+    outline: none;
+    height: 40px;
+    text-align: center;
+    width: 130px;
+    border-radius: 40px;
+    background: #181818;
+    border: 2px solid #90b6fc;
+    color: #90b6fc;
+    letter-spacing: 1px;
+    text-shadow: 0;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-right: 20px;
+    margin-top: -15px;
+}
+
+
+#button2:hover {
+    color: white;
+    background: #90b6fc;
+}
+#button2:active {
+    letter-spacing: 2px;
+}
+
+.onclic {
+    width: 40px;
+    border-color: #bbb;
+    border-width: 3px;
+    font-size: 0;
+    border-left-color: #1ecd97;
+}
+.onclic:hover {
+    color: #1ecd97;
+    background: white;
+}
+.validate {
+    font-size: 13px;
+    color: white;
+    background: #1ecd97;
 }
