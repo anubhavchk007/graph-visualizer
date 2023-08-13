@@ -95,6 +95,8 @@ export default class PathfindingVisualizer extends Component {
   }
 
   visualizeDijkstra() {
+    if(START_NODE_ROW === null || FINISH_NODE_ROW === null) return;
+
     const {grid} = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
@@ -103,6 +105,8 @@ export default class PathfindingVisualizer extends Component {
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
   visualizeDFS() {
+    if(START_NODE_ROW === null || FINISH_NODE_ROW === null) return;
+
     const {grid} = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
@@ -111,6 +115,8 @@ export default class PathfindingVisualizer extends Component {
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
   visualizeAStar() {
+    if(START_NODE_ROW === null || FINISH_NODE_ROW === null) return;
+
     const {grid} = this.state;
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
@@ -132,9 +138,10 @@ export default class PathfindingVisualizer extends Component {
         nodes.push([row, col]);
     }
 
-    const newGrid = getNewGridWithWallToggled2(grid, nodes);
+    const newGrid = getNewGridWithWallToggled(grid, nodes);
     this.setState({grid: newGrid});
   }
+
   clearGrid() {
     let newGrid = getInitialGrid();
     for(let i = 0; i < newGrid.length; i++) {
@@ -147,6 +154,10 @@ export default class PathfindingVisualizer extends Component {
     }
     isStartNode = 0;
     isEndNode = 0;
+    START_NODE_ROW = null;
+    START_NODE_COL = null;
+    FINISH_NODE_ROW = null;
+    FINISH_NODE_COL = null;
 
     this.setState({grid: newGrid});
   }
@@ -235,15 +246,7 @@ const createNode = (col, row) => {
   };
 };
 
-const maintainStartAndEnd = (grid) => {
-    // const newGrid = grid.slice();
-    // newGrid[START_NODE_ROW][START_NODE_COL].isStart = true;
-    // newGrid[FINISH_NODE_ROW][FINISH_NODE_COL].isStart = true;
-    document.getElementById(`node-${START_NODE_ROW}-${START_NODE_COL}`).className = "node node-start";
-    document.getElementById(`node-${FINISH_NODE_ROW}-${FINISH_NODE_COL}`).className = "node node-finish";
 
-    // return newGrid;
-}
 
 const getNewGridWithWallToggled = (grid, nodes) => {
   const newGrid = grid.slice();
@@ -252,38 +255,9 @@ const getNewGridWithWallToggled = (grid, nodes) => {
     newNode.isWall = !newNode.isWall;
     newGrid[node[0]][node[1]] = newNode;
   }
-  maintainStartAndEnd();
   return newGrid;
 };
 
-const getNewGridWithWallToggled2 = (grid, nodes) => {
-    const newGrid = getInitialGrid();
-
-    for(const node of nodes) {
-        const newNode = newGrid[node[0]][node[1]];
-        newNode.isWall = true;
-        newGrid[node[0]][node[1]] = newNode;
-    }
-    
-    for(const x in newGrid) {
-        for(const node in x) {
-            if(node.row === START_NODE_ROW && node.col === START_NODE_COL) {
-                const newNode = newGrid[node[0]][node[1]];
-                document.getElementById(`node-${node.row}-${node.col}`).className = "node node-start";
-                newNode.isStart = true;
-                newGrid[node[0]][node[1]] = newNode;
-            }
-            if(node.row === FINISH_NODE_ROW && node.col === FINISH_NODE_COL) {
-                const newNode = newGrid[node[0]][node[1]];
-                document.getElementById(`node-${node.row}-${node.col}`).className = "node node-finish";
-                newNode.isFinish = true;
-                newGrid[node[0]][node[1]] = newNode;
-            }
-        }
-    }
-
-    return newGrid;
-  };
 
 const getNewGridWithStart = (grid, node) => {
     const newGrid = grid.slice();
