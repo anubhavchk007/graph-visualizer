@@ -4,7 +4,10 @@ export function dfs(grid, startNode, finishNode) {
     while (nextNodes.length) {
         const currentNode = nextNodes.pop();
 
-        if(currentNode === finishNode) return visitedNodesInOrder;
+        if(currentNode === finishNode) {
+            visitedNodesInOrder.push(currentNode);
+            return visitedNodesInOrder;
+        }
 
         if(!currentNode.isWall && (currentNode.isStart || !currentNode.isVisited)) {
             currentNode.isVisited = true;
