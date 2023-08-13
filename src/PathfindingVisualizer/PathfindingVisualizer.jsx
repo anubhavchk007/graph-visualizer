@@ -6,10 +6,10 @@ import {aStar} from '../algorithms/aStar.js'
 import './PathfindingVisualizer.css';
 
 
-let START_NODE_ROW;
-let START_NODE_COL;
-let FINISH_NODE_ROW;
-let FINISH_NODE_COL;
+let START_NODE_ROW = null;
+let START_NODE_COL = null;
+let FINISH_NODE_ROW = null;
+let FINISH_NODE_COL = null;
 let isStartNode = 0;
 let isEndNode = 0;
 
@@ -124,21 +124,31 @@ export default class PathfindingVisualizer extends Component {
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
     this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   }
-
   createMaze() {
     const {grid} = this.state;
     const nodes = [];
-    for(let i = 0; i < Math.floor(Math.random() * 300) + 200; i++) {
+    const walls = [];
+    let totalWalls = 250;
+
+    for(let i = 0; i < grid.length; i++) {
+        for(let j = 0; j < grid[0].length; j++) {
+            if(grid[i][j].isWall === true) {
+                walls.push([i, j]);
+            }
+        }
+    }
+    
+    for(let wallCount = 0; wallCount < totalWalls; wallCount++) {
         let row, col;
         do {
             row = Math.floor(Math.random() * 22);
             col = Math.floor(Math.random() * 50);
-        } while((row === START_NODE_ROW && col === START_NODE_COL) || (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) || (grid[row][col].isWall));
+        } while((row === START_NODE_ROW && col === START_NODE_COL) || (row === FINISH_NODE_ROW && col === FINISH_NODE_COL) || (grid[row][col].isWall === true));
         
         nodes.push([row, col]);
     }
 
-    const newGrid = getNewGridWithWallToggled(grid, nodes);
+    const newGrid = getNewGridWithWallToggled2(grid, nodes, walls);
     this.setState({grid: newGrid});
   }
 
@@ -250,13 +260,35 @@ const createNode = (col, row) => {
 
 const getNewGridWithWallToggled = (grid, nodes) => {
   const newGrid = grid.slice();
+
   for(const node of nodes) {
     const newNode = newGrid[node[0]][node[1]];
     newNode.isWall = !newNode.isWall;
     newGrid[node[0]][node[1]] = newNode;
-  }
-  return newGrid;
+}
+return newGrid;
 };
+
+const getNewGridWithWallToggled2 = (grid, nodes, walls) => {
+    const newGrid = grid.slice();
+    
+    for(const node of walls) {
+        const newNode = newGrid[node[0]][node[1]];
+        if(newNode.isWall) {
+            console.log("WALL");
+        }
+        newNode.isWall = !newNode.isWall;
+        newGrid[node[0]][node[1]] = newNode;
+        
+    }
+    
+    for(const node of nodes) {
+        const newNode = newGrid[node[0]][node[1]];
+        newNode.isWall = !newNode.isWall;
+      newGrid[node[0]][node[1]] = newNode;
+    }
+    return newGrid;
+  };
 
 
 const getNewGridWithStart = (grid, node) => {
