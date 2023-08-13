@@ -6,26 +6,46 @@ import {aStar} from '../algorithms/aStar.js'
 import './PathfindingVisualizer.css';
 
 
-const START_NODE_ROW = Math.floor(Math.random() * 22);
-const START_NODE_COL = Math.floor(Math.random() * 50);
-const FINISH_NODE_ROW = Math.floor(Math.random() * 22);
-const FINISH_NODE_COL = Math.floor(Math.random() * 50);
+let START_NODE_ROW;
+let START_NODE_COL;
+let FINISH_NODE_ROW;
+let FINISH_NODE_COL;
+let isStartNode = 0;
+let isEndNode = 0;
 
 export default class PathfindingVisualizer extends Component {
-  state = {grid: [], mouseIsPressed: false};
-
-  componentDidMount() {
-    const grid = getInitialGrid();
-    this.setState({grid});
-  }
-
-  handleMouseDown(row, col) {
-    const nodes = [[row, col]];
-    const newGrid = getNewGridWithWallToggled(this.state.grid, nodes);
-    this.setState({grid: newGrid, mouseIsPressed: true});
-  }
-
-  handleMouseEnter(row, col) {
+    state = {grid: [], mouseIsPressed: false};
+    
+    
+    componentDidMount() {
+        const grid = getInitialGrid();
+        this.setState({grid});
+    }
+    
+    handleMouseDown(row, col) {
+        let newGrid;
+        if (!isStartNode) {
+            const node = [row, col];
+            START_NODE_ROW = row;
+            START_NODE_COL = col;
+            newGrid = getNewGridWithStart(this.state.grid, node);
+            isStartNode = 1;
+        } else if (!isEndNode && (row === START_NODE_ROW && col === START_NODE_COL)) {
+            return;
+        } else if (!isEndNode) {
+            const node = [row, col];
+            FINISH_NODE_ROW = row;
+            FINISH_NODE_COL = col;
+            newGrid = getNewGridWithEnd(this.state.grid, node);
+            isEndNode = 1;
+        } else {
+            const nodes = [[row, col]];
+            newGrid = getNewGridWithWallToggled(this.state.grid, nodes);
+        }
+        this.setState({grid: newGrid, mouseIsPressed: true});
+    }
+    
+    handleMouseEnter(row, col) {
     if (!this.state.mouseIsPressed) return;
     const nodes = [[row, col]];
     const newGrid = getNewGridWithWallToggled(this.state.grid, nodes);
@@ -102,7 +122,7 @@ export default class PathfindingVisualizer extends Component {
   createMaze() {
     const {grid} = this.state;
     const nodes = [];
-    for(let i = 0; i < Math.floor(Math.random() * 600) + 200; i++) {
+    for(let i = 0; i < Math.floor(Math.random() * 300) + 200; i++) {
         let row, col;
         do {
             row = Math.floor(Math.random() * 22);
@@ -116,20 +136,17 @@ export default class PathfindingVisualizer extends Component {
     this.setState({grid: newGrid});
   }
   clearGrid() {
-    // const {grid} = this.state;
     let newGrid = getInitialGrid();
     for(let i = 0; i < newGrid.length; i++) {
         for(let j = 0; j < newGrid[0].length; j++) {
             let node = newGrid[i][j];
-            if(i === START_NODE_ROW && j === START_NODE_COL) {
-                document.getElementById(`node-${node.row}-${node.col}`).className = "node node-start";
-            } else if (i === FINISH_NODE_ROW && j === FINISH_NODE_COL) {
-                document.getElementById(`node-${node.row}-${node.col}`).className = "node node-finish";
-            } else {
-                document.getElementById(`node-${node.row}-${node.col}`).className = "node node";
-            }
+            
+            document.getElementById(`node-${node.row}-${node.col}`).className = "node node";
+
         }
     }
+    isStartNode = 0;
+    isEndNode = 0;
 
     this.setState({grid: newGrid});
   }
@@ -197,6 +214,7 @@ const getInitialGrid = () => {
     const currentRow = [];
     for (let col = 0; col < 50; col++) {
       currentRow.push(createNode(col, row));
+
     }
     grid.push(currentRow);
   }
@@ -207,17 +225,25 @@ const createNode = (col, row) => {
   return {
     col,
     row,
-    isStart: row === START_NODE_ROW && col === START_NODE_COL,
-    isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+    isStart: 0,
+    isFinish: 0,
     distance: Infinity,
     isVisited: false,
     isWall: false,
     previousNode: null,
-    distanceToFinishNode: 
-        Math.abs(FINISH_NODE_ROW - row) +
-        Math.abs(FINISH_NODE_COL - col),
+    distanceToFinishNode: 0,
   };
 };
+
+const maintainStartAndEnd = (grid) => {
+    // const newGrid = grid.slice();
+    // newGrid[START_NODE_ROW][START_NODE_COL].isStart = true;
+    // newGrid[FINISH_NODE_ROW][FINISH_NODE_COL].isStart = true;
+    document.getElementById(`node-${START_NODE_ROW}-${START_NODE_COL}`).className = "node node-start";
+    document.getElementById(`node-${FINISH_NODE_ROW}-${FINISH_NODE_COL}`).className = "node node-finish";
+
+    // return newGrid;
+}
 
 const getNewGridWithWallToggled = (grid, nodes) => {
   const newGrid = grid.slice();
@@ -226,6 +252,7 @@ const getNewGridWithWallToggled = (grid, nodes) => {
     newNode.isWall = !newNode.isWall;
     newGrid[node[0]][node[1]] = newNode;
   }
+  maintainStartAndEnd();
   return newGrid;
 };
 
@@ -233,11 +260,52 @@ const getNewGridWithWallToggled2 = (grid, nodes) => {
     const newGrid = getInitialGrid();
 
     for(const node of nodes) {
-      const newNode = newGrid[node[0]][node[1]];
-      newNode.isWall = true;
-      newGrid[node[0]][node[1]] = newNode;
+        const newNode = newGrid[node[0]][node[1]];
+        newNode.isWall = true;
+        newGrid[node[0]][node[1]] = newNode;
+    }
+    
+    for(const x in newGrid) {
+        for(const node in x) {
+            if(node.row === START_NODE_ROW && node.col === START_NODE_COL) {
+                const newNode = newGrid[node[0]][node[1]];
+                document.getElementById(`node-${node.row}-${node.col}`).className = "node node-start";
+                newNode.isStart = true;
+                newGrid[node[0]][node[1]] = newNode;
+            }
+            if(node.row === FINISH_NODE_ROW && node.col === FINISH_NODE_COL) {
+                const newNode = newGrid[node[0]][node[1]];
+                document.getElementById(`node-${node.row}-${node.col}`).className = "node node-finish";
+                newNode.isFinish = true;
+                newGrid[node[0]][node[1]] = newNode;
+            }
+        }
     }
 
     return newGrid;
   };
+
+const getNewGridWithStart = (grid, node) => {
+    const newGrid = grid.slice();
+    newGrid[node[0]][node[1]].isStart = true;
+    document.getElementById(`node-${node[0]}-${node[1]}`).className = "node node-start";
+
+    return newGrid;
+};
+
+const getNewGridWithEnd = (grid, node) => {
+    const newGrid = grid.slice();
+    newGrid[node[0]][node[1]].isFinish = true;
+    document.getElementById(`node-${node[0]}-${node[1]}`).className = "node node-finish";
+
+    for(let i = 0; i < newGrid.length; i++) {
+        for(let j = 0; j < newGrid[0].length; j++) {
+            newGrid[i][j].distanceToFinishNode = Math.abs(FINISH_NODE_ROW - i) + Math.abs(FINISH_NODE_COL - j);
+        }
+    }
+
+    return newGrid;
+};
+
+
 
