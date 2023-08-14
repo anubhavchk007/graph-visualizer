@@ -24,6 +24,7 @@ export default class PathfindingVisualizer extends Component {
     
     handleMouseDown(row, col) {
         let newGrid;
+        if(this.state.grid[row][col].isWall) return;
         if (!isStartNode) {
             const node = [row, col];
             START_NODE_ROW = row;
@@ -128,7 +129,7 @@ export default class PathfindingVisualizer extends Component {
     const {grid} = this.state;
     const nodes = [];
     const walls = [];
-    let totalWalls = 250;
+    let totalWalls = 450;
 
     for(let i = 0; i < grid.length; i++) {
         for(let j = 0; j < grid[0].length; j++) {
@@ -274,9 +275,6 @@ const getNewGridWithWallToggled2 = (grid, nodes, walls) => {
     
     for(const node of walls) {
         const newNode = newGrid[node[0]][node[1]];
-        if(newNode.isWall) {
-            console.log("WALL");
-        }
         newNode.isWall = !newNode.isWall;
         newGrid[node[0]][node[1]] = newNode;
         
